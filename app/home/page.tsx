@@ -149,8 +149,8 @@ export default function Home() {
               {char.name}
             </span>
             <Link
-              href="/chat"
-              aria-label={`${char.name}와 대화하기`}
+              href="/character"
+              aria-label={`${char.name} 캐릭터 페이지`}
               style={{
                 width: 44,
                 height: 44,

@@ -118,6 +118,7 @@ export function Avatar({
 }
 
 /** 바텀 내비게이션 (커뮤니티는 Phase 2 → 갤러리로 대체) */
+// figma 수정본 네비바 — 플로팅 필 바. 활성 탭만 다크 필(아이콘+라벨), 나머지는 아이콘만.
 export function BottomNav({
   active,
 }: {
@@ -129,13 +130,45 @@ export function BottomNav({
     label: string,
     isActive: boolean,
   ) => (
-    <Link href={href} className={isActive ? "active" : ""}>
-      <Icon name={icon} size={24} />
-      {label}
+    <Link
+      href={href}
+      aria-label={label}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 7,
+        flex: isActive ? "0 0 auto" : 1,
+        padding: isActive ? "11px 22px" : "11px 0",
+        borderRadius: 999,
+        background: isActive ? "var(--gray-900)" : "transparent",
+        color: isActive ? "#fff" : "var(--gray-400)",
+        fontSize: 13,
+        fontWeight: 700,
+        textDecoration: "none",
+        whiteSpace: "nowrap",
+        transition: "all 360ms cubic-bezier(0.32, 0.72, 0, 1)",
+      }}
+    >
+      <Icon name={icon} size={22} />
+      {isActive && label}
     </Link>
   );
   return (
-    <nav className="bottom-nav">
+    <nav
+      style={{
+        position: "sticky",
+        bottom: 0,
+        margin: "8px 16px calc(10px + env(safe-area-inset-bottom))",
+        padding: 5,
+        display: "flex",
+        alignItems: "center",
+        borderRadius: 999,
+        background: "rgba(255,255,255,0.96)",
+        boxShadow: "0 6px 22px rgba(30, 24, 18, 0.10)",
+        backdropFilter: "blur(8px)",
+      }}
+    >
       {item("/home", "home", "홈", active === "home")}
       {item("/chatlist", "chat", "채팅", active === "chat")}
       {item("/community", "community", "커뮤", active === "community" || active === "gallery")}
