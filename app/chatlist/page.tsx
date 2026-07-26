@@ -1,7 +1,8 @@
 "use client";
 
-// chatlist — Spring 백엔드 연동판. 전체 캐릭터 그리드, 탭하면 활성 전환 + 채팅 진입.
-// 백엔드에 삭제 API가 없어 편집(삭제) 모드는 비활성화했다.
+// chatlist — Spring 백엔드 연동판. figma 수정본(42:3162): 카톡식 세로 리스트.
+// 좌 아바타 + 이름 + 마지막 메시지 프리뷰(1줄 말줄임). 탭하면 활성 전환 + 채팅 진입.
+// 마지막 메시지 전용 API가 없어 캐릭터별 getMessages 병렬 호출로 뽑는다(실패 시 프리뷰 생략).
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -12,6 +13,7 @@ import { Icon } from "../icons";
 export default function ChatListPage() {
   const router = useRouter();
   const [list, setList] = useState<CharacterSummary[] | null>(null);
+  const [previews, setPreviews] = useState<Record<number, string>>({});
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -23,6 +25,20 @@ export default function ChatListPage() {
           return;
         }
         setList(characters);
+
+        // 각 캐릭터의 마지막 메시지를 병렬로 — 실패한 건 그냥 프리뷰 생략
+        const entries = await Promise.all(
+          characters.map(async (c) => {
+            try {
+              const msgs = await backend.getMessages(c.id);
+              const last = msgs[msgs.length - 1];
+              return [c.id, last?.content ?? ""] as const;
+            } catch {
+              return [c.id, ""] as const;
+            }
+          }),
+        );
+        setPreviews(Object.fromEntries(entries));
       } catch (e) {
         setError(e instanceof Error ? e.message : "백엔드 연결 실패");
       }
@@ -44,87 +60,66 @@ export default function ChatListPage() {
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
       <header className="topbar">
         <span className="h3">채팅</span>
-        <span style={{ width: 24 }} />
-      </header>
-
-      <div
-        style={{
-          padding: "4px 20px",
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 14,
-        }}
-      >
-        {list.map((c) => (
-          <button
-            key={c.id}
-            style={{
-              border: "none",
-              background: "transparent",
-              padding: 0,
-              cursor: "pointer",
-              textAlign: "left",
-            }}
-            onClick={() => {
-              setActiveCharacterId(c.id);
-              router.push("/chat");
-            }}
-          >
-            <div
-              style={{
-                position: "relative",
-                aspectRatio: "1 / 1.05",
-                borderRadius: 14,
-                overflow: "hidden",
-              }}
-            >
-              <Avatar emoji="🙂" src={c.profileImageUrl ?? undefined} size="100%" radius={0} />
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  padding: "24px 10px 8px",
-                  borderRadius: "0 0 14px 14px",
-                  background: "linear-gradient(transparent, rgba(30,30,30,0.65))",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-end",
-                  color: "#fff",
-                }}
-              >
-                <span className="label1">{c.name}</span>
-                <span className="caption">
-                  {c.age} | {c.gender}
-                </span>
-              </div>
-            </div>
-          </button>
-        ))}
-
-        {/* 새 캐릭터 만들기 */}
         <button
           onClick={() => router.push("/create")}
+          aria-label="새 캐릭터 만들기"
           style={{
-            aspectRatio: "1 / 1.05",
-            borderRadius: 14,
-            border: "1px dashed var(--gray-300)",
-            background: "var(--gray-50)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            color: "var(--gray-500)",
+            border: "none",
+            background: "transparent",
+            padding: 0,
             cursor: "pointer",
-            fontFamily: "inherit",
-            transition: "all 200ms var(--ease)",
+            display: "flex",
+            color: "var(--gray-800)",
           }}
         >
-          <Icon name="plus" size={26} style={{ color: "var(--orange-700)" }} />
-          <span className="caption">새 캐릭터 만들기</span>
+          <Icon name="menu" size={24} />
         </button>
+      </header>
+
+      <div style={{ padding: "4px 0" }}>
+        {list.map((c) => {
+          const preview = previews[c.id];
+          return (
+            <button
+              key={c.id}
+              onClick={() => {
+                setActiveCharacterId(c.id);
+                router.push("/chat");
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                width: "100%",
+                padding: "12px 20px",
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+                textAlign: "left",
+                fontFamily: "inherit",
+              }}
+            >
+              <Avatar emoji="🙂" src={c.profileImageUrl ?? undefined} size={52} radius={16} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="label1" style={{ marginBottom: 2 }}>
+                  {c.name}
+                </div>
+                <div
+                  className="body2"
+                  style={{
+                    color: "var(--gray-500)",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    minHeight: 21,
+                  }}
+                >
+                  {preview ?? ""}
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <div style={{ flex: 1 }} />

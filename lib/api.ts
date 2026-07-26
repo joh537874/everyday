@@ -2,7 +2,12 @@
 // 모든 응답은 { success, data, message } 래핑 — api()가 언랩해서 data만 돌려준다.
 // 데모라 계정 UI 없이 데모 계정으로 자동 로그인한다.
 
-const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080";
+// 데모 배포용: 프로덕션 빌드는 효진 로컬 백엔드를 뚫은 cloudflare 터널로, 개발은 localhost.
+// 터널을 재시작하면 URL이 바뀌므로 그때는 이 값(또는 NEXT_PUBLIC_API_BASE)을 갱신해야 한다.
+const DEMO_TUNNEL = "https://colors-lectures-rfc-issues.trycloudflare.com";
+const BASE =
+  process.env.NEXT_PUBLIC_API_BASE ??
+  (process.env.NODE_ENV === "production" ? DEMO_TUNNEL : "http://localhost:8080");
 
 const DEMO_EMAIL = "demo@everyday.app";
 const DEMO_PASSWORD = "demo1234!";

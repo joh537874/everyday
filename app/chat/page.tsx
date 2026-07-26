@@ -13,7 +13,6 @@ import {
   type CharacterDetail,
   type ChatMessage,
 } from "@/lib/api";
-import { Avatar } from "../components";
 import { Icon } from "../icons";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -99,7 +98,8 @@ function ChatInner() {
         : await backend.sendMessage(char.id, text);
       setMessages([...base, toMsg(reply)]);
     } catch (e) {
-      setMessages(base);
+      // 정책 거절 스펙 — 캐릭터 말풍선으로 안내 + 입력바 위 배너(에러 시에만)
+      setMessages([...base, { role: "assistant", content: "답변을 생성할 수 없어요." }]);
       setError(e instanceof Error ? e.message : "메시지 전송 실패");
     } finally {
       setBusy(false);
@@ -141,7 +141,6 @@ function ChatInner() {
           className="headline1"
           style={{ display: "flex", alignItems: "center", gap: 8 }}
         >
-          <Avatar emoji="🙂" src={char.profileImageUrl ?? undefined} size={28} radius={14} />
           {char.name}
           {episodeTitle && (
             <span className="point-badge" style={{ fontSize: 11 }}>
@@ -151,11 +150,11 @@ function ChatInner() {
         </span>
         <button
           className="nav-btn"
-          style={{ color: "var(--gray-500)", display: "flex" }}
+          style={{ color: "var(--gray-700)", display: "flex" }}
           onClick={() => router.push("/edit")}
           title="캐릭터 편집"
         >
-          <Icon name="settings" size={20} />
+          <Icon name="menu" size={22} />
         </button>
       </header>
 
@@ -179,7 +178,11 @@ function ChatInner() {
               }}
             >
               {lines.map((line, j) => (
-                <div key={j} className={`bubble ${isUser ? "user" : "char"}`}>
+                <div
+                  key={j}
+                  className={`bubble ${isUser ? "user" : "char"}`}
+                  style={{ maxWidth: 240 }}
+                >
                   {line || (
                     <span className="typing">
                       <span />
@@ -192,12 +195,23 @@ function ChatInner() {
             </div>
           );
         })}
-        {error && char && (
-          <div className="caption" style={{ color: "var(--orange-700)", textAlign: "center" }}>
-            {error}
-          </div>
-        )}
       </div>
+
+      {/* 정책 거절 배너 — 에러 발생 시에만 입력바 위에 노출 */}
+      {error && char && (
+        <div
+          style={{
+            background: "var(--gray-900)",
+            color: "var(--gray-300)",
+            fontSize: 12,
+            fontWeight: 500,
+            textAlign: "center",
+            padding: "10px 16px",
+          }}
+        >
+          ※ 정책상 민감한 요청은 AI 답변을 생성할 수 없어요
+        </div>
+      )}
 
       {/* 입력바 */}
       <div className="chat-inputbar">

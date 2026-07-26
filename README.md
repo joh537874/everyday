@@ -1,10 +1,4 @@
-# everyday — with your character
-
-> 진짜 같은 일상을 함께 보내는 AI 캐릭터 미연시
-
-🌐 **Live**: https://everyday-prototype.vercel.app
-
-## 미연시 LLM 프로토타입 (FS-02→03 검증용)
+# 미연시 LLM 프로토타입 (FS-02→03 검증용)
 
 프로필(.md) 주입 + 프롬프트 캐싱 + 스트리밍 + **원가 변수 ①② 측정**을 한 번에 확인하는 최소 구현.
 팀 레포 아님 — 검증 끝나면 로직만 수현 레포로 이식.

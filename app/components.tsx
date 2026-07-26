@@ -121,7 +121,7 @@ export function Avatar({
 export function BottomNav({
   active,
 }: {
-  active: "home" | "chat" | "gallery" | "my";
+  active: "home" | "chat" | "gallery" | "community" | "my";
 }) {
   const item = (
     href: string,
@@ -138,8 +138,8 @@ export function BottomNav({
     <nav className="bottom-nav">
       {item("/home", "home", "홈", active === "home")}
       {item("/chatlist", "chat", "채팅", active === "chat")}
-      {item("/gallery", "community", "갤러리", active === "gallery")}
-      {item("/my", "person", "마이페이지", active === "my")}
+      {item("/community", "community", "커뮤", active === "community" || active === "gallery")}
+      {item("/my", "person", "마이", active === "my")}
     </nav>
   );
 }

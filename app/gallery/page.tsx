@@ -54,7 +54,23 @@ export default function GalleryPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
       <header className="topbar">
-        <span className="h3">갤러리</span>
+        <button
+          onClick={() => router.back()}
+          aria-label="뒤로"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            background: "none",
+            border: "none",
+            padding: "4px 0",
+            cursor: "pointer",
+            font: "inherit",
+          }}
+        >
+          <Icon name="chevron-left" size={22} style={{ color: "var(--gray-700)" }} />
+          <span className="h3">내 갤러리</span>
+        </button>
         <span className="caption" style={{ color: "var(--gray-400)" }}>
           {photos.length}장
         </span>
