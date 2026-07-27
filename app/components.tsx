@@ -155,25 +155,43 @@ export function BottomNav({
     </Link>
   );
   return (
-    <nav
-      style={{
-        position: "sticky",
-        bottom: 0,
-        margin: "8px 16px calc(10px + env(safe-area-inset-bottom))",
-        padding: 5,
-        display: "flex",
-        alignItems: "center",
-        borderRadius: 999,
-        background: "rgba(255,255,255,0.96)",
-        boxShadow: "0 6px 22px rgba(30, 24, 18, 0.10)",
-        backdropFilter: "blur(8px)",
-      }}
-    >
-      {item("/home", "home", "홈", active === "home")}
-      {item("/chatlist", "chat", "채팅", active === "chat")}
-      {item("/community", "community", "커뮤", active === "community" || active === "gallery")}
-      {item("/my", "person", "마이", active === "my")}
-    </nav>
+    <>
+      {/* 자리 확보 — fixed 네비바에 콘텐츠가 가리지 않도록 */}
+      <div aria-hidden style={{ height: "calc(78px + env(safe-area-inset-bottom))", flexShrink: 0 }} />
+      {/* 375 프레임 하단 중앙에 고정 — 스크롤해도 항상 화면 하단 */}
+      <nav
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "100%",
+          maxWidth: 375,
+          padding: "0 16px calc(10px + env(safe-area-inset-bottom))",
+          boxSizing: "border-box",
+          zIndex: 50,
+          pointerEvents: "none",
+        }}
+      >
+        <div
+          style={{
+            padding: 5,
+            display: "flex",
+            alignItems: "center",
+            borderRadius: 999,
+            background: "rgba(255,255,255,0.96)",
+            boxShadow: "0 6px 22px rgba(30, 24, 18, 0.14)",
+            backdropFilter: "blur(8px)",
+            pointerEvents: "auto",
+          }}
+        >
+          {item("/home", "home", "홈", active === "home")}
+          {item("/chatlist", "chat", "채팅", active === "chat")}
+          {item("/community", "community", "커뮤", active === "community" || active === "gallery")}
+          {item("/my", "person", "마이", active === "my")}
+        </div>
+      </nav>
+    </>
   );
 }
 
