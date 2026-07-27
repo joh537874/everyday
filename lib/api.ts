@@ -4,7 +4,7 @@
 
 // 데모 배포용: 프로덕션 빌드는 효진 로컬 백엔드를 뚫은 cloudflare 터널로, 개발은 localhost.
 // 터널을 재시작하면 URL이 바뀌므로 그때는 이 값(또는 NEXT_PUBLIC_API_BASE)을 갱신해야 한다.
-const DEMO_TUNNEL = "https://colors-lectures-rfc-issues.trycloudflare.com";
+const DEMO_TUNNEL = "https://quantum-minimize-milton-costa.trycloudflare.com";
 const BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
   (process.env.NODE_ENV === "production" ? DEMO_TUNNEL : "http://localhost:8080");
