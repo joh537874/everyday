@@ -225,6 +225,30 @@ export default function Home() {
             </div>
           </div>
         ))}
+
+        {/* 캐러셀 끝 — 새 캐릭터 추가 카드 (figma 278:2213, 점선 보더) */}
+        <button
+          onClick={() => router.push("/create")}
+          aria-label="새 캐릭터 추가하기"
+          style={{
+            flex: "0 0 calc(min(375px, 100vw) - 72px)",
+            scrollSnapAlign: "start",
+            borderRadius: 20,
+            border: "1.5px dashed var(--gray-800)",
+            background: "transparent",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 20,
+            color: "var(--gray-800)",
+            cursor: "pointer",
+            fontFamily: "inherit",
+          }}
+        >
+          <Icon name="plus" size={44} />
+          <span style={{ fontSize: 17, fontWeight: 600 }}>새 캐릭터 추가하기</span>
+        </button>
       </div>
 
       {/* 페이지 인디케이터 (캐릭터 여러 명일 때) */}
